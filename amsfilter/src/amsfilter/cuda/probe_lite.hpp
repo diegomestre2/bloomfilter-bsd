@@ -108,7 +108,7 @@ public:
 
   /// Asynchronously batch-probe the filter.
   void __attribute__((noinline))
-  operator()(const key_t* keys, const std::size_t key_cnt) {
+  operator()(const key_t* keys, const std::size_t key_cnt, bool cached_keys) {
     if (key_cnt == 0) return;
     if (key_cnt > max_batch_size_) {
       throw std::invalid_argument("The 'key_cnt' argument must not exceed"
@@ -123,6 +123,22 @@ public:
     // Execute the kernel (using the low-level API).
     probe_instance_(thrust::raw_pointer_cast(filter_data_->data()),
       device_keys_.begin(), key_cnt, device_bitmap_.begin(), *cuda_stream_);
+    // Support cached keys
+    if (!cached_keys) {
+      // Copy the keys to the pre-allocated device memory.
+      cudaMemcpyAsync(device_keys_.begin(), keys, key_cnt * sizeof(key_t),
+          cudaMemcpyHostToDevice, *cuda_stream_);
+      cuda_check_error();
+      // Execute the kernel (using the low-level API).
+      probe_instance_(thrust::raw_pointer_cast(filter_data_->data()),
+        device_keys_.begin(), key_cnt, device_bitmap_.begin(), *cuda_stream_);
+    } else {
+      //keys are cached
+      // Execute the kernel (using the low-level API).
+      probe_instance_(thrust::raw_pointer_cast(filter_data_->data()),
+        &keys[0], key_cnt, device_bitmap_.begin(), *cuda_stream_);
+    }
+
     // Copy the result bitmap from device to pre-allocated host memory.
     const std::size_t bitmap_size_bytes =
         host_bitmap_.size() * sizeof(bitmap_storage_t);
