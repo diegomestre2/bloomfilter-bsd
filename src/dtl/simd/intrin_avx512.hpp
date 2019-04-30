@@ -266,7 +266,7 @@ struct compress<$i32, __m512i> : vector_fn<$i32, __m512i> {
   }
 
   __forceinline__ __m512i operator()(const __m512i& src, const mask16& m, uint32_t& pop_cnt) const noexcept {
-    pop_cnt = dtl::bits::pop_count(m.data);
+    pop_cnt = dtl::bits::pop_count((u32)m.data);
     return _mm512_maskz_compress_epi32(m.data, src);
   }
 };
@@ -278,7 +278,7 @@ struct compress<$u32, __m512i> : vector_fn<$u32, __m512i> {
   }
 
   __forceinline__ __m512i operator()(const __m512i& src, const mask16& m, uint32_t& pop_cnt) const noexcept {
-    pop_cnt = dtl::bits::pop_count(m.data);
+    pop_cnt = dtl::bits::pop_count((u32)m.data);
     return _mm512_maskz_compress_epi32(m.data, src);
   }
 };
