@@ -9,6 +9,7 @@
 #include <random>
 #include <sched.h>
 #include <thread>
+#include <functional>
 
 #include <dtl/dtl.hpp>
 #include <dtl/bits.hpp>

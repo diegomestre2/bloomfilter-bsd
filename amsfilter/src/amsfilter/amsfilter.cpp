@@ -63,7 +63,12 @@ struct AmsFilter::impl {
               + ", z=" + std::to_string(conf.zone_cnt)
               + ", k=" + std::to_string(conf.k)
               + ", and, a=" + std::to_string(static_cast<i32>(conf.addr_mode))
-              + ".");
+              + "."    + std::to_string(resolved_type::word_cnt_per_block)
+              + ", s=" + std::to_string(resolved_type::sector_cnt)
+              + ", z=" + std::to_string(resolved_type::zone_cnt)
+              + ", k=" + std::to_string(resolved_type::k)
+              + ", and, a=" + std::to_string(static_cast<i32>(resolved_type::addr_mode))
+              + "." + "");
     }
     // Instantiate the resolved type.
     instance = std::make_unique<resolved_type>(desired_length);

@@ -31,7 +31,7 @@ public:
   /// Returns true if the configuration is valid, false otherwise.
   $u1
   test(const Config& c) {
-    result = false;
+    result = true;
     // Try to resolves the filter type.
     try {
       amsfilter::internal::get_instance(c, *this);
